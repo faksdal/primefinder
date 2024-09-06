@@ -1,57 +1,111 @@
-#include <iostream>
-#include <cmath>
-
-bool isprime_opt(int number)
-{
-
-	if(number <= 1)
-		return false;
-
-    // If 2 or 3, is prime
-	if(number <= 3)
-		return true;
-
-	// If divisible by 2 or 3, is not prime
-	if(number % 2 == 0 || number % 3 == 0)
-		return false;
-
-	// Check for factors from 5 to the square of the number
-    for (int i = 5; i * i <= number; i += 6) {
-        if (number % i == 0 || number % (i + 2) == 0 )
-            return false;
-    }
-
-    // If no factors were found, the number is prime
-    return true;
-}
+// C++ program to print all primes smaller than or equal to
+// n using Sieve of Eratosthenes
+#include <bits/stdc++.h>
+using namespace std;
 
 /*
-bool isprime(int number)
-{
-	// Check for factors from 2 to the square root of the number
-    for (int i = 2; i <= std::sqrt(number); i++) {
-        if (number % i == 0)
-            return false;
-    }
-
-    // If no factors were found, the number is prime
-    return true;
-}
+ *
+ * Ok boys, run and weep (aka raw) :-D
+ *
+ *
 */
 
-int main(int argc, char* argv[]) {
 
-    unsigned long	ceiling;
-	int				numprimes = 0;
+//
+// Custom grouping of large numbers, see: https://cplusplus.com/reference/locale/numpunct/grouping/
+//
+struct my_numpunct : std::numpunct<char> {
+	// We want to group in numbers of three
+	std::string do_grouping() const {return "\03";}
+};
 
-	argc <= 1 ? ceiling = 10000000 : ceiling = (long) atol(argv[1]);
 
-	for(int i = 2; i <= ceiling; i++){
-		//isprime(i) ? std::cout << " prime :-)" << std::endl : std::cout << " not prime :-(" << std::endl;
-        isprime_opt(i) ? numprimes++ : numprimes += 0;
-	}
 
-	std::cout << "Number of primes from 2 to " << ceiling << " is " << numprimes << std::endl;
+void SieveOfEratosthenes(unsigned long long n, bool _print)
+{
+    unsigned long long   counter = 0;
+
+
+    vector<bool> is_prime(n+1, true);
+    is_prime[0] = is_prime[1] = false;
+
+    if(n > 10000000)
+        cout << "Calculating primes...";
+
+    for (unsigned long long i = 2; i <= n; i++) {
+        //cout << i << " ";
+        if (is_prime[i] && (unsigned long long)i * i <= n) {
+            for (unsigned long long j = i * i; j <= n; j += i){
+                is_prime[j] = false;
+            }
+        }
+        if(is_prime[i]){
+            counter++;
+            if(_print)
+                cout << " " << i;
+        }
+
+    }
+    std::locale loc (std::cout.getloc(),new my_numpunct);
+    std::cout.imbue(loc);
+    cout << endl << endl << "Number of primes between 2 and " << n << " is " << counter << endl;
+}
+
+
+
+void SieveOfEratosthenesOptimized(unsigned long long n, bool _print)
+{
+    unsigned long long   counter = 0;
+
+
+    vector<bool> is_prime(n+1, true);
+    is_prime[0] = is_prime[1] = false;
+
+    if(n > 10000000)
+        cout << "Calculating primes...";
+
+    for (unsigned long long i = 2; i <= n; i++) {
+        //cout << i << " ";
+        if (is_prime[i] && (unsigned long long)i * i <= n) {
+            for (unsigned long long j = i * i; j <= n; j += i){
+                is_prime[j] = false;
+            }
+        }
+        if(is_prime[i]){
+            counter++;
+            if(_print)
+                cout << " " << i;
+        }
+
+    }
+    std::locale loc (std::cout.getloc(),new my_numpunct);
+    std::cout.imbue(loc);
+    cout << endl << endl << "Number of primes between 2 and " << n << " is " << counter << endl;
+}
+
+
+
+// Driver Program to test above function
+int main(int argc, char* argv[])
+{
+    unsigned long long  num;
+    bool            print = false;
+
+    argc <= 1 ? num = 50 : num = (unsigned long long)atol(argv[1]);
+    if(argc > 2)
+        print = true;
+
+    std::locale loc (std::cout.getloc(),new my_numpunct);
+    std::cout.imbue(loc);
+
+    if(print)
+        cout << "Following are the prime numbers smaller than or equal to " << num << endl;
+    else
+        cout << "Calculating number of primes between 2 and " << num << endl;
+
+    SieveOfEratosthenes(num, print);
+
+    cout << endl;
 
     return 0;
 }
