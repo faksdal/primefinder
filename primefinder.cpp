@@ -57,7 +57,7 @@ struct my_numpunct : std::numpunct<char> {
 void sieveOfEratosthenes(unsigned long long _start, unsigned long long _stop, bool _print, short _columns)
 {
 	bool				newColumn = false;
-	short				column = 5;
+	short				column = 1;
     unsigned long long	counter = 0;
 
 
@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
 							break;
 						}
 			case 'c':	{
-							cout << "optarg: " << optarg << endl;
 							columns = atoi(optarg);
 							break;
 						}
@@ -173,6 +172,10 @@ int main(int argc, char *argv[])
 
 	sieveOfEratosthenes(start, stop, print, columns);
 
+	if(argc == 1){
+		cout << endl;
+		printUsage(argv[0]);
+	}
 
 	return 0;
 }	//	int main(int argc, char *argv[])
