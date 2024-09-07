@@ -1,10 +1,10 @@
 /******************************************************************************
- * main.cpp
+ * primefinder.cpp
  *
- *  Created on: 2 May 2024
+ *  Created on: 7 Sep 2024
  *      Author: jole
  *
- *      Program for testing my astro functions
+ *      Program for printing primes
  *
  * 
  *
@@ -14,8 +14,6 @@
 #include <iomanip>
 #include <getopt.h>
 #include <locale.h>
-//#include <time.h>
-//#include <sys/time.h>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -34,7 +32,7 @@ void printUsage(char* _progName)
 	cout << "Source found here: git@github.com:faksdal/primefinder.git, modify at will" << endl;
 	cout << "Jon Leithe 2024" << endl << endl;
 
-	cout << "Usage: " << _progName << "[switches]" << endl;
+	cout << "Usage: " << _progName << " [switches]" << endl;
 	cout << "\t\t-a (--start)\tnumber to start from (default = 2)" << endl;
 	cout << "\t\t-o (--stop)\tnumber to stop at (default = 23)" << endl;
 	cout << "\t\t-p (--print)\tprint primes to screen" << endl;
@@ -120,11 +118,7 @@ int main(int argc, char *argv[])
 					{"stop",	required_argument,	NULL,	'o'},
 					{"printz",	required_argument,	NULL,	'p'},
 					{"col",		required_argument,	NULL,	'c'},
-					//{"lon",		required_argument,	NULL,	5},
-					//{"dst",		required_argument,	NULL,	6},
-					//{"verbose",	no_argument,		NULL,	'v'},
 					{"help",	no_argument,		NULL,	'h'},
-					//{"dow",		no_argument,		NULL,	'd'},
 					{0, 0, 0, 0}
 	};	//End of getopt()-variables
 	
@@ -162,13 +156,6 @@ int main(int argc, char *argv[])
 
 	std::locale loc (std::cout.getloc(),new my_numpunct);
 	std::cout.imbue(loc);
-
-	/*
-	if(print)
-		cout << "Following are the prime numbers smaller than or equal to " << num << endl;
-	else
-		cout << "Calculating number of primes between 2 and " << num << endl;
-	*/
 
 	sieveOfEratosthenes(start, stop, print, columns);
 
