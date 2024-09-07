@@ -30,6 +30,6 @@ $(TARGET): primefinder.o
 	$(CC) $(CFLAGS) -o $(TARGET) primefinder.cpp
 
 clean:
-	rm /*.o
+	rm *.o
 	rm $(TARGET)
 
