@@ -22,7 +22,7 @@
 
 #$(OBJDIR)/%.o: $(SRCDIR)/%.cpp	
 #	$(CXX) $(CPPFLAGS) -c -o $@ $^
-TARGET=pf
+TARGET=raw
 CC=g++
 CFLAGS=-I.
 

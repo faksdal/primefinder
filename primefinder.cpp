@@ -1,14 +1,47 @@
-// C++ program to print all primes smaller than or equal to
-// n using Sieve of Eratosthenes
+/******************************************************************************
+ * main.cpp
+ *
+ *  Created on: 2 May 2024
+ *      Author: jole
+ *
+ *      Program for testing my astro functions
+ *
+ * 
+ *
+ *****************************************************************************/
+
+#include <iostream>
+#include <iomanip>
+#include <getopt.h>
+#include <locale.h>
+//#include <time.h>
+//#include <sys/time.h>
 #include <bits/stdc++.h>
+
 using namespace std;
 
-/*
- *
- * Ok boys, run and weep (aka raw) :-D
- *
- *
-*/
+
+
+void printUsage(char* _progName)
+{
+	if(_progName[0] == '.'){
+		*_progName++;
+		*_progName++;
+	}
+
+	cout << "Terminal utility to print primes to tty,  based on the sieve of Eratosthenes" << endl;
+	cout << "It comes with absolutely NO WARRANTY at all!" << endl;
+	cout << "Source found here: git@github.com:faksdal/primefinder.git, modify at will" << endl;
+	cout << "Jon Leithe 2024" << endl << endl;
+
+	cout << "Usage: " << _progName << "[switches]" << endl;
+	cout << "\t\t-a (--start)\tnumber to start from (default = 2)" << endl;
+	cout << "\t\t-o (--stop)\tnumber to stop at (default = 23)" << endl;
+	cout << "\t\t-p (--print)\tprint primes to screen" << endl;
+	cout << "\t\t-c (--col)\tnumber of columns to print (default = 5)" << endl;
+	cout << "\t\t-h (--help)\tprint this help text" << endl;
+}
+
 
 
 //
@@ -21,91 +54,133 @@ struct my_numpunct : std::numpunct<char> {
 
 
 
-void SieveOfEratosthenes(unsigned long long n, bool _print)
+void sieveOfEratosthenes(unsigned long long _start, unsigned long long _stop, bool _print, short _columns)
 {
-    unsigned long long   counter = 0;
+	bool				newColumn = false;
+	short				column = 5;
+    unsigned long long	counter = 0;
 
 
-    vector<bool> is_prime(n+1, true);
+    vector<bool> is_prime(_stop+1, true);
     is_prime[0] = is_prime[1] = false;
 
-    if(n > 10000000)
+    if(_stop > 10000000)
         cout << "Calculating primes...";
 
-    for (unsigned long long i = 2; i <= n; i++) {
-        //cout << i << " ";
-        if (is_prime[i] && (unsigned long long)i * i <= n) {
-            for (unsigned long long j = i * i; j <= n; j += i){
+    for (unsigned long long i = _start; i <= _stop; i++) {
+        if (is_prime[i] && (unsigned long long)i * i <= _stop) {
+            for (unsigned long long j = i * i; j <= _stop; j += i){
                 is_prime[j] = false;
             }
         }
         if(is_prime[i]){
             counter++;
-            if(_print)
-                cout << " " << i;
-        }
+            if(_print){
+            	if(column > 1)
+            		cout << "\t\t";
+            	cout << i;
+            	column++;
 
-    }
-    std::locale loc (std::cout.getloc(),new my_numpunct);
-    std::cout.imbue(loc);
-    cout << endl << endl << "Number of primes between 2 and " << n << " is " << counter << endl;
-}
-
-
-
-void SieveOfEratosthenesOptimized(unsigned long long n, bool _print)
-{
-    unsigned long long   counter = 0;
-
-
-    vector<bool> is_prime(n+1, true);
-    is_prime[0] = is_prime[1] = false;
-
-    if(n > 10000000)
-        cout << "Calculating primes...";
-
-    for (unsigned long long i = 2; i <= n; i++) {
-        //cout << i << " ";
-        if (is_prime[i] && (unsigned long long)i * i <= n) {
-            for (unsigned long long j = i * i; j <= n; j += i){
-                is_prime[j] = false;
+            	if(column > _columns){
+            		column = 1;
+            		cout << endl;
+            	}
             }
         }
-        if(is_prime[i]){
-            counter++;
-            if(_print)
-                cout << " " << i;
-        }
 
     }
     std::locale loc (std::cout.getloc(),new my_numpunct);
     std::cout.imbue(loc);
-    cout << endl << endl << "Number of primes between 2 and " << n << " is " << counter << endl;
+    if(_print)
+    	cout << endl;
+
+    cout << "Number of primes between " << _start << " and " << _stop << " is " << counter << endl;
 }
 
 
 
-// Driver Program to test above function
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    unsigned long long  num;
-    bool            print = false;
+	bool				print = false;
+	int					columns = 5;
+	unsigned long long	start, stop;
 
-    argc <= 1 ? num = 50 : num = (unsigned long long)atol(argv[1]);
-    if(argc > 2)
-        print = true;
+	// assign default values
+	start = 2;
+	stop = 23;
 
-    std::locale loc (std::cout.getloc(),new my_numpunct);
-    std::cout.imbue(loc);
+	//
+	//	getopt variables
+	//
+	int		c, optionIndex;
+	char	*shortOptions = (char*)"a:c:ho:p";
+	
+	struct option	longOptions[] = {
+					{"start",	required_argument,	NULL,	'a'},
+					{"stop",	required_argument,	NULL,	'o'},
+					{"printz",	required_argument,	NULL,	'p'},
+					{"col",		required_argument,	NULL,	'c'},
+					//{"lon",		required_argument,	NULL,	5},
+					//{"dst",		required_argument,	NULL,	6},
+					//{"verbose",	no_argument,		NULL,	'v'},
+					{"help",	no_argument,		NULL,	'h'},
+					//{"dow",		no_argument,		NULL,	'd'},
+					{0, 0, 0, 0}
+	};	//End of getopt()-variables
+	
+	//
+	//	getopt() switch statement
+	//
+	while((c = getopt_long(argc, argv, shortOptions, longOptions, &optionIndex)) != -1){
+		switch(c){
+			case 'a':	{
+							start = atol(optarg);
+							break;
+						}
+			case 'c':	{
+							cout << "optarg: " << optarg << endl;
+							columns = atoi(optarg);
+							break;
+						}
+			case 'h':	{
+							printUsage(argv[0]);
+							exit(1);
+						}
+			case 'o':	{
+							stop = atol(optarg);
+							break;
+						}
+			case 'p':	{
+							print = true;
+							break;
+						}
+			default:	{
+							cout << "Switch default\n" << endl;
+							break;
+						}
+		}	//end of getopt() switch statement
+	}	// end of while-loop
 
-    if(print)
-        cout << "Following are the prime numbers smaller than or equal to " << num << endl;
-    else
-        cout << "Calculating number of primes between 2 and " << num << endl;
+	std::locale loc (std::cout.getloc(),new my_numpunct);
+	std::cout.imbue(loc);
 
-    SieveOfEratosthenes(num, print);
+	/*
+	if(print)
+		cout << "Following are the prime numbers smaller than or equal to " << num << endl;
+	else
+		cout << "Calculating number of primes between 2 and " << num << endl;
+	*/
 
-    cout << endl;
+	sieveOfEratosthenes(start, stop, print, columns);
 
-    return 0;
-}
+
+	return 0;
+}	//	int main(int argc, char *argv[])
+
+
+
+
+
+
+
+
