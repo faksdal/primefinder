@@ -148,12 +148,13 @@ void sieveOfAtkin(unsigned long long _start, unsigned long long _stop, bool _pri
 		if (sieve[r]){
 			for (unsigned long long i = r * r; i <= _stop; i += r * r)
 				sieve[i] = false;
-			}
+		}
 	}
-	if(_print){
+	//if(_print){
 		for (unsigned long long x = 2; x <= _stop; x++){
 			if(sieve[x]){
 				counter++;
+				if(_print){
 				if(column > 1)
 					cout << "\t\t";
 				cout << x;
@@ -163,10 +164,11 @@ void sieveOfAtkin(unsigned long long _start, unsigned long long _stop, bool _pri
 					column = 1;
 					cout << endl;
 				}
+				}
 
 			}
 		}
-	}
+	//}
 
 	std::locale loc (std::cout.getloc(),new my_numpunct);
 	std::cout.imbue(loc);
